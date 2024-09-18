@@ -8,17 +8,19 @@ import com.kotlinplayground.dataset.courseList
 fun main() {
     val courseList = courseList()
 
-    val designCoursePredicate = { course: Course -> course.category == CourseCategory.DESIGN }
-    exploreFilter(courseList, designCoursePredicate)
+//    val designCoursePredicate = { course: Course -> course.category == CourseCategory.DESIGN }
+//    exploreFilter(courseList, designCoursePredicate)
+//
+//    val categoryTransform = {course: Course -> course.category };
+//    exploreMap<CourseCategory>(courseList, categoryTransform)
+//
+//    val doubleTransform = { outerList: List<Int> -> outerList.map { it * it } };
+//    exploreFlatMap<Int>(listOf(listOf(1, 2, 3), listOf(4, 5, 6)), doubleTransform)
+//
+//    val filteredCourses = exploreFlatMap1(courseList, KAFKA);
+//    println("Filtered Courses: $filteredCourses")
 
-    val categoryTransform = {course: Course -> course.category };
-    exploreMap<CourseCategory>(courseList, categoryTransform)
-
-    val doubleTransform = { outerList: List<Int> -> outerList.map { it * it } };
-    exploreFlatMap<Int>(listOf(listOf(1, 2, 3), listOf(4, 5, 6)), doubleTransform)
-
-    val filteredCourses = exploreFlatMap1(courseList, KAFKA);
-    println("Filtered Courses: $filteredCourses")
+    val hashMap = exploreHashMap()
 
 }
 
@@ -67,4 +69,24 @@ fun exploreFlatMap1(courseList: List<Course>, topic: String): Set<String> {
                 .filter { it == topic }
                 .map { course.name }
         }.toSet()
+}
+
+
+fun exploreHashMap() {
+    val hashMap = mutableMapOf("Anton" to 36, "Mark" to 4);
+
+    hashMap.forEach { (k, v) -> println("$k: $v") }
+
+    val value = hashMap.getOrDefault("Ksu", 4000);
+
+    println("$value")
+    println("${hashMap.containsKey("Ksu")}")
+
+    val filteredKeys = hashMap
+        .filterKeys { it.length > 4 }
+        .map { it.key.uppercase()}
+    println("Filtered keys: $filteredKeys")
+
+    val maxAge = hashMap.maxByOrNull { it.value }?.key
+    println("Max Age: $maxAge")
 }
