@@ -2,6 +2,7 @@ package org.example.com.kotlinplayground.collections
 
 import com.kotlinplayground.dataset.Course
 import com.kotlinplayground.dataset.CourseCategory
+import com.kotlinplayground.dataset.KAFKA
 import com.kotlinplayground.dataset.courseList
 
 fun main() {
@@ -11,14 +12,19 @@ fun main() {
     exploreFilter(courseList, designCoursePredicate)
 
     val categoryTransform = {course: Course -> course.category };
-    exploreMap(courseList, categoryTransform)
+    exploreMap<CourseCategory>(courseList, categoryTransform)
+
+    val doubleTransform = { outerList: List<Int> -> outerList.map { it * it } };
+    exploreFlatMap<Int>(listOf(listOf(1, 2, 3), listOf(4, 5, 6)), doubleTransform)
+
+    val filteredCourses = exploreFlatMap1(courseList, KAFKA);
+    println("Filtered Courses: $filteredCourses")
+
 }
 
-
-
-fun exploreMap(
+fun <T>exploreMap(
     courseList: MutableList<Course>,
-    transform: (Course) -> Any
+    transform: (Course) -> T
 ) {
 
     val result = courseList
@@ -44,4 +50,21 @@ fun exploreFilter(
         .forEach {
             println("Dev Course: ${it.name}")
         }
+}
+
+fun <T>exploreFlatMap(lists: List<List<T>>, transform: (List<T>) -> List<T>) {
+    lists
+        .flatMap { transform.invoke(it) }
+        .forEach {
+            println("FlatMapped: $it")
+        }
+}
+
+fun exploreFlatMap1(courseList: List<Course>, topic: String): Set<String> {
+    return courseList
+        .flatMap { course ->
+            course.topicsCovered
+                .filter { it == topic }
+                .map { course.name }
+        }.toSet()
 }
