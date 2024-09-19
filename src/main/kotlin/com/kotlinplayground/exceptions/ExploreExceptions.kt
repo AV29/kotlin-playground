@@ -13,3 +13,7 @@ fun nameLength(name: String?): Int? {
         null;
     }
 }
+
+fun returnNothing(): Nothing {
+    throw RuntimeException()
+}
